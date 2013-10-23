@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import zx.domain.*
 import zx.exception.ExistedException
+import zx.repository.PatientMessageRepository
 import zx.repository.PatientRepository
 import zx.repository.PlanRepository
 import zx.repository.SurgeryTypeRepository
@@ -26,6 +27,8 @@ class PatientServiceImpl implements PatientService {
     PlanRepository planRepository
     @Autowired
     TrainingRepository trainingRepository
+    @Autowired
+    PatientMessageRepository patientMessageRepository
 
     @Override
     Patient findById(Long id) {
@@ -199,5 +202,11 @@ class PatientServiceImpl implements PatientService {
             surgery = new SurgeryType(name: surgeryType.name, id: surgeryType.id)
         }
         surgeryTypeRepository.save(surgery)
+    }
+
+    @Override
+    List<PatientMessage> findMessages(Patient patient) {
+        def list = patientMessageRepository.findByPatient(patient)
+        list.reverse(true)
     }
 }

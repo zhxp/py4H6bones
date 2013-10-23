@@ -10,8 +10,11 @@ class Training {
     Plan plan
     @Temporal(TemporalType.TIMESTAMP)
     Date startedAt
+    @Temporal(TemporalType.TIMESTAMP)
+    Date endedAt
+    int duration
     @ElementCollection
-    List<Integer> points = []
+    List<Double> points = []
     int feeling
     int effect
     int reaction

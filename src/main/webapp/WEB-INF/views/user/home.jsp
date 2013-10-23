@@ -269,7 +269,9 @@
                                 <th>天数</th>
                                 <th>每日次数</th>
                                 <th>每次步数</th>
-                                <th>目标压力</th>
+                                <th>压力-公斤</th>
+                                <th>备注</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody id="ep_plans">
@@ -307,7 +309,7 @@
                                 <th>时间</th>
                                 <th>阶段</th>
                                 <th>步数</th>
-                                <th>压力</th>
+                                <th>压力-公斤</th>
                                 <th>总体感受</th>
                                 <th>训练强度</th>
                                 <th>不良反应</th>

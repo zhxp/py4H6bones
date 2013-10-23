@@ -177,6 +177,7 @@ function editPatient(pid) {
                         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="times" value="3">').val(it.times).prop('readonly', !!it.started)))
                         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="steps">').val(it.steps).prop('readonly', !!it.started)))
                         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="pressure">').val(it.pressure).prop('readonly', !!it.started)))
+                        .append($('<td></td>').append($('<textarea class="form-control input-sm" name="memo" rows="1" cols="100">').text(it.memo).prop('readonly', !!it.started)))
                     ;
                 if (!it.started) {
                     tr.append($('<td></td>').append($('<button class="btn btn-sm btn-danger" onclick="removePlanStep(this)">删除</button>')))
@@ -257,12 +258,14 @@ function savePatient() {
     $('#ep_plans > tr').each(function (i, it) {
         var p = {};
         data.plans.push(p);
-        p.id = $(it).data('id')
+        var node = $(it);
+        p.id = node.data('id')
         p.stage = i + 1;
-        p.days = $(it).find('*[name="days"]').val();
-        p.times = $(it).find('*[name="times"]').val();
-        p.steps = $(it).find('*[name="steps"]').val();
-        p.pressure = $(it).find('*[name="pressure"]').val();
+        p.days = node.find('*[name="days"]').val();
+        p.times = node.find('*[name="times"]').val();
+        p.steps = node.find('*[name="steps"]').val();
+        p.pressure = node.find('*[name="pressure"]').val();
+        p.memo = node.find('*[name="memo"]').text();
     });
     $.ajax($('#urls').data('patient_save'),
         {
@@ -324,6 +327,7 @@ function addPlanStep() {
         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="times" value="3">')))
         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="steps">')))
         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="pressure">')))
+        .append($('<td></td>').append($('<textarea class="form-control input-sm" name="memo" rows="1" cols="100">')))
         .append($('<td></td>').append($('<button class="btn btn-sm btn-danger" onclick="removePlanStep(this)">删除</button>')))
         .appendTo($('#ep_plans'));
 }

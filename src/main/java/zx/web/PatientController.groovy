@@ -101,17 +101,6 @@ class PatientController {
         return result
     }
 
-    @RequestMapping('edit')
-    @ResponseBody
-    Map<String, Object> editPatientInfo(@RequestBody PatientBean patientInfoBean) {
-        Map<String, Object> result = new HashMap<>()
-        List<String> errors = new LinkedList<>()
-        Patient patient = patientService.findByPid(patientInfoBean.getPid())
-        patientInfoBean.copyTo(patient, patientService, userService)
-        patientService.save(patient)
-        return result
-    }
-
     @RequestMapping('createPlan/{pid}')
     @ResponseBody
     List<String> createPlan(@PathVariable String pid, @RequestBody List<PlanBean> beans) {

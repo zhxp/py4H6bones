@@ -20,4 +20,5 @@ public interface PatientService {
     List<Training> findTraining(Patient patient);
     Training findTrainingById(Long id);
     void saveSurgery(SurgeryType surgeryType);
+    List<PatientMessage> findMessages(Patient patient);
 }

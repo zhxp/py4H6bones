@@ -35,4 +35,5 @@ class Patient {
     List<Plan> plans = []
     @Temporal(TemporalType.DATE)
     Date startedOn
+    String token
 }
