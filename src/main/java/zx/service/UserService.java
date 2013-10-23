@@ -1,11 +1,13 @@
 package zx.service;
 
 import zx.domain.User;
-import zx.exception.ExistedException;
+
+import java.util.List;
 
 public interface UserService {
-    User createUser(String username) throws ExistedException;
     void save(User user);
     User findByUsername(String username);
     User findById(Long userId);
+    List<User> findAllDoctors();
+    List<User> findTopLevelDoctors();
 }

@@ -17,6 +17,11 @@ class PlanServiceImpl implements PlanService {
     PatientRepository patientRepository
 
     @Override
+    Plan findById(Long id) {
+        id ? planRepository.findOne(id) : null
+    }
+
+    @Override
     @Transactional
     void createPlan(Patient patient, List<Plan> plans) {
         List<Plan> oldPlans = planRepository.findByPatient(patient)

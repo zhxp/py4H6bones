@@ -1,148 +1,143 @@
-$('#show_createPatient').click(function() {
-    $('#createPatient_pid').val('');
-    $('#createPatient_phone').val('');
-    $('#createPatient span[id^="error_"]').text('');
-    $('#createPatient').modal('show');
-});
-$('#do_createPatient').click(function() {
-    postForm({
-        form:$('#form_createPatient'),
-        done:function(data) {
-            $('#createPatient span[id^="error_"]').text('');
-            if (data.errors && data.errors.length) {
-                data.errors.forEach(function(err) {
-                    $('#error_createPatient_' + err).text(data[err]);
-                })
-            } else {
-                $('#createPatient').modal('hide');
+function showChangePasswordDialog() {
+    $('#cpwd_oldPassword').val('');
+    $('#cpwd_newPassword').val('');
+    $('#cpwd_newPassword2').val('');
+    $('#changePasswordDialog').modal('show');
+}
+function changePassword() {
+    var p = $('#cpwd_newPassword').val();
+    var p2 = $('#cpwd_newPassword2').val();
+    if (p != p2) {
+        bootbox.alert('两次输入新密码不一致');
+    } else if (p == '') {
+        bootbox.alert('密码不能为空');
+    } else {
+        $.ajax($('#changePasswordDialog').data('url'),
+            {
+                type:'post',
+                data:{oldPassword:$('#cpwd_oldPassword').val(), newPassword:p}
             }
-        }
-    });
-});
-$('#patient_new_tab').on('shown.bs.tab', function(e) {
-    var pane = $('#patientList_new');
-    pane.empty();
-    $.getJSON('patient/findNew')
-        .done(function(data) {
-            data.forEach(function(it) {
-                var tr = $('<tr></tr>', {'data-pid':it.pid});
-                pane.append(tr
-                    .append($('<td></td>').text(it.pid))
-                    .append($('<td></td>').text(it.phone))
-                    .append($('<td></td>').text(it.createdAt))
-                )
+        ).done(function(data) {
+                if (data.errors && data.errors.length) {
+                    var msg = '';
+                    data.errors.forEach(function(it) {
+                        msg += '<br>' + it;
+                    })
+                    bootbox.alert(msg);
+                } else {
+                    $('#changePasswordDialog').modal('hide');
+                }
             })
-        });
-});
-$('#patient_registered_tab').on('shown.bs.tab', function(e) {
+    }
+    return false;
+}
+$('#patient_registered_tab').on('shown.bs.tab', function (e) {
     var pane = $('#patientList_registered');
     pane.empty();
-    $.getJSON('patient/findRegistered')
-        .done(function(data) {
-            data.forEach(function(it) {
-                var tr = $('<tr></tr>', {'data-pid':it.pid});
+    $.getJSON(pane.data('url'))
+        .done(function (data) {
+            data.forEach(function (it) {
+                var tr = $('<tr></tr>', {'data-pid': it.pid});
                 pane.append(tr
                     .append($('<td></td>').text(it.pid))
                     .append($('<td></td>').text(it.name))
                     .append($('<td></td>').text(it.phone))
                     .append($('<td></td>')
-                        .append($('<button class="btn btn-default">详细</button>').click(function(pid) {viewPatientDetails(it.pid)}))
-                        .append($('<button class="btn btn-default">创建计划</button>').click(function(pid) {createPlan(it.pid)}))
+                        .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
+                            editPatient(it.pid)
+                        }))
                     )
                 )
             })
         });
 });
-$('#patient_planned_tab').on('shown.bs.tab', function(e) {
+$('#patient_planned_tab').on('shown.bs.tab', function (e) {
     var pane = $('#patientList_planned');
     pane.empty();
-    $.getJSON('patient/findPlanned')
-        .done(function(data) {
-            data.forEach(function(it) {
-                var tr = $('<tr></tr>', {'data-pid':it.pid});
+    $.getJSON(pane.data('url'))
+        .done(function (data) {
+            data.forEach(function (it) {
+                var tr = $('<tr></tr>', {'data-pid': it.pid});
                 pane.append(tr
                     .append($('<td></td>').text(it.pid))
                     .append($('<td></td>').text(it.name))
                     .append($('<td></td>').text(it.phone))
                     .append($('<td></td>')
-                        .append($('<button class="btn btn-default">详细</button>').click(function(pid) {viewPatientDetails(it.pid)}))
-                        .append($('<button class="btn btn-default">修改计划</button>').click(function(pid) {updatePlan(it.pid)}))
+                        .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
+                            editPatient(it.pid)
+                        }))
                     )
                 )
             })
         });
 });
-$('#do_editPatient').click(function() {
-    $.ajax($('#editPatient').data('edit-path'),
-        {
-            type:'post',
-            contentType:'application/json',
-            data:JSON.stringify({
-                pid:$('#ep_pid_text').text(),
-                phone:$('#ep_phone').val(),
-                password:$('#ep_password').val(),
-                name:$('#ep_name').val(),
-                height:$('#ep_height').val(),
-                weight:$('#ep_weight').val(),
-                bmi:$('#ep_bmi_text').text(),
-                sex:$('#ep_sex_male').prop('checked') ? 1 : $('#ep_sex_female').prop('checked') ? 0 : null,
-                age:$('#ep_age').val(),
-                email:$('#ep_email').val(),
-                address:$('#ep_address').val(),
-                patientType:$('#ep_patientType').val(),
-
-                surgeryDate:$('#ep_surgeryDate').val(),
-                dischargeDate:$('#ep_dischargeDate').val(),
-                surgeryTypeId:$('#ep_surgeryType').val(),
-                surgeonId:$('#ep_surgeryBy').val(),
-                surgeryMemo:$('#ep_surgeryMemo').val()
+$('#patient_trained_tab').on('shown.bs.tab', function (e) {
+    loadTrainedPatients()
+});
+loadTrainedPatients();
+function loadTrainedPatients() {
+    var pane = $('#patientList_trained');
+    pane.empty();
+    $.getJSON(pane.data('url'))
+        .done(function (data) {
+            data.forEach(function (it) {
+                var tr = $('<tr></tr>', {'data-pid': it.pid});
+                pane.append(tr
+                    .append($('<td></td>').text(it.pid))
+                    .append($('<td></td>').text(it.name))
+                    .append($('<td></td>').text(it.surgeryDate))
+                    .append($('<td></td>').text(it.surgeryName))
+                    .append($('<td></td>').text('如何计算?'))
+                    .append($('<td></td>').text(it.feeling))
+                    .append($('<td></td>').text(it.effect))
+                    .append($('<td></td>').text(it.reaction))
+                    .append($('<td></td>')
+                        .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
+                            editPatient(it.pid)
+                        }))
+                        .append($('<button class="btn btn-link">训练明细</button>').click(function (pid) {
+                            viewTraining(it.pid)
+                        }))
+                    )
+                )
             })
-        })
-        .done(function(data) {
-            if (data.errors && data.errors.length) {
-                data.errors.forEach(function(err) {
-                    $('#error_editPatient_' + err).text(data[err]);
-                })
-            } else {
-                $('#editPatient').modal('hide');
-            }
         });
-});
-$('#do_createPlan').click(function() {
-    var data = [];
-    $('#cpl_plan tr').each(function(i, it) {
-        var p = {};
-        data.push(p);
-        p.stage = i + 1;
-        p.days = $(it).find('*[name="days"]').val();
-        p.times = $(it).find('*[name="times"]').val();
-        p.steps = $(it).find('*[name="steps"]').val();
-        p.pressure = $(it).find('*[name="pressure"]').val();
-    });
-    var cp = $('#createPlan');
-    $.ajax(cp.data('update-path') + '/' + cp.data('pid'),
-        {
-            type:'post',
-            contentType:'application/json',
-            data:JSON.stringify(data)
-        })
-        .done(function(data) {
-            console.log(data);
-            if (data && data.length) {
-                var errorPane = $('#createPlan_errors');
-                errorPane.empty();
-                data.forEach(function(err) {
-                    errorPane.append($('<li class="text-danger"></li>').text(err));
-                });
-            } else {
-                $('#createPlan').modal('hide');
-            }
-        });
-});
-function viewPatientDetails(pid) {
-    $.getJSON($('#editPatient').data('details-path'), {pid:pid})
-        .done(function(data) {
-            $('#ep_pid_text').html(data.pid);
+}
+function createPatient() {
+    $('#ep_id').val('')
+    //basic
+    $('#ep_pid').val('');
+    $('#ep_name').val('');
+    $('#ep_password').val('');
+    $('#ep_phone').val('');
+    $('#ep_email').val('');
+    $('#ep_height').val('');
+    $('#ep_weight').val('');
+    $('#ep_bmi_text').html('');
+    $('#ep_address').val('');
+    $('#ep_age').val('');
+    $('#ep_sex_male').prop('checked', false);
+    $('#ep_sex_female').prop('checked', false);
+    ep_changeSexColor();
+
+    //surgery
+    $('#ep_surgeryDate').val('');
+    $('#ep_dischargeDate').val('');
+    $('#ep_surgeryMemo').val('');
+    $('#ep_surgeryType').val('');
+    $('#ep_doctor').val('');
+
+    //plan
+    $('#ep_plans').empty();
+
+    $('#editPatient').modal('show');
+}
+function editPatient(pid) {
+    $.getJSON($('#urls').data('patient_bean') + pid)
+        .done(function (data) {
+            $('#ep_id').val(data.id)
+            //basic
+            $('#ep_pid').val(data.pid);
             $('#ep_name').val(data.name);
             $('#ep_password').val(data.password);
             $('#ep_phone').val(data.phone);
@@ -157,69 +152,130 @@ function viewPatientDetails(pid) {
             $('#ep_sex_female').prop('checked', data.sex == 0);
             ep_changeSexColor();
 
+            //surgery
             $('#ep_surgeryDate').val(data.surgeryDate);
             $('#ep_dischargeDate').val(data.dischargeDate);
             $('#ep_surgeryMemo').val(data.surgeryMemo);
             $('#ep_surgeryType').val(data.surgeryTypeId).trigger('change');
-            $('#ep_surgeryBy').val(data.surgeonId).trigger('change');
+            $('#ep_doctor').val(data.doctorId).trigger('change');
+
+            //plan
+            $('#ep_plans').empty();
+            data.plans.forEach(function (it) {
+                var tr = $('<tr></tr>', {'data-id': it.id})
+                        .append($('<td></td>').append($('<p class="form-control-static" name="index"></p>').text(it.stage)))
+                        .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="days" value="7">').val(it.days).prop('readonly', !!it.started)))
+                        .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="times" value="3">').val(it.times).prop('readonly', !!it.started)))
+                        .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="steps">').val(it.steps).prop('readonly', !!it.started)))
+                        .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="pressure">').val(it.pressure).prop('readonly', !!it.started)))
+                    ;
+                if (!it.started) {
+                    tr.append($('<td></td>').append($('<button class="btn btn-sm btn-danger" onclick="removePlanStep(this)">删除</button>')))
+                }
+                tr.appendTo($('#ep_plans'));
+            });
 
             $('#editPatient').modal('show');
         })
 }
-function createPlan(pid) {
-    $('#createPlan').data('pid', pid);
-    $.getJSON($('#editPatient').data('details-path'), {pid:pid})
-        .done(function(data) {
-            $('#cpl_pid').text(data.pid);
-            $('#cpl_name').text(data.name);
-            $('#cpl_sex').text(data.sex == 1 ? '男' : data.sex == 0 ? '女' : '');
-            $('#cpl_age').text(data.age);
-            $('#cpl_height').text(data.height + ' 厘米');
-            $('#cpl_weight').text(data.weight + ' 斤');
-            $('#cpl_bmi').text(data.bmi);
-            $('#cpl_surgeryDate').text(data.surgeryDateString);
-            $('#cpl_dischargeDate').text(data.dischargeDateString);
-            $('#cpl_surgeryMemo').text(data.surgeryMemo);
-            $('#cpl_surgeryName').text(data.surgeryName);
-            $('#cpl_surgeonName').text(data.surgeonName);
-            $('#cpl_plan').empty();
-            $('#createPlan_errors').empty();
-            $('#createPlan').modal('show');
+function viewTraining(pid) {
+    $.getJSON($('#urls').data('patient_training') + pid)
+        .done(function (data) {
+            var list = $('#vt_list');
+            list.empty();
+            var url = list.data('url')
+            data.forEach(function (it) {
+                var tr = $('<tr></tr>', {'data-id': it.id})
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.date)))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.stage)))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.steps + '/' + it.planSteps)))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.averagePressure + '/' + it.PlanPressure)))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.feeling)))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.effect)))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.reaction)))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.overrunRate + '%')))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.hasMemo ? '有' : '')))
+                        .append($('<td></td>')
+                            .append($('<a target="_blank" href="' + url + it.id + '" class=" btn btn-link">图表</button>'))
+                        )
+                    ;
+                tr.appendTo(list);
+            });
+
+            $('#viewTraining').modal('show');
         })
 }
-function updatePlan(pid) {
-    $('#createPlan').data('pid', pid);
-    $.getJSON($('#editPatient').data('details-path'), {pid:pid})
-        .done(function(data) {
-            $('#cpl_pid').text(data.pid);
-            $('#cpl_name').text(data.name);
-            $('#cpl_sex').text(data.sex == 1 ? '男' : data.sex == 0 ? '女' : '');
-            $('#cpl_age').text(data.age);
-            $('#cpl_height').text(data.height + ' 厘米');
-            $('#cpl_weight').text(data.weight + ' 斤');
-            $('#cpl_bmi').text(data.bmi);
-            $('#cpl_surgeryDate').text(data.surgeryDateString);
-            $('#cpl_dischargeDate').text(data.dischargeDateString);
-            $('#cpl_surgeryMemo').text(data.surgeryMemo);
-            $('#cpl_surgeryName').text(data.surgeryName);
-            $('#cpl_surgeonName').text(data.surgeonName);
-            $('#cpl_plan').empty();
-            $('#createPlan_errors').empty();
-            $.getJSON('patient/plans/' + pid)
-                .done(function(data) {
-                    data.forEach(function(it) {
-                        var tr = $('<tr></tr>')
-                            .append($('<td></td>').append($('<p class="form-control-static" name="index"></p>').text(it.stage)))
-                            .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="days" value="7">').val(it.days)))
-                            .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="times" value="3">').val(it.times)))
-                            .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="steps">').val(it.steps)))
-                            .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="pressure">').val(it.pressure)))
-                            .append($('<td></td>').append($('<button class="btn btn-sm btn-danger" onclick="removePlanStep(this)">删除</button>')))
-                            .appendTo($('#cpl_plan'));
-                    });
-                    $('#createPlan').modal('show');
-                })
+function validatePatient() {
+    var message = '';
+    if (!$('#ep_pid').val().trim()) message += '病人标识不能为空';
+    if (!$('#ep_password').val().trim()) message += '<br>密码不能为空';
+    if (!$('#ep_sex_male').prop('checked') && !$('#ep_sex_female').prop('checked')) message += '<br>性别不能为空';
+    if (!$('#ep_height').val()) message += '<br>身高不能为空';
+    if (!$('#ep_weight').val()) message += '<br>体重不能为空';
+    if (message) {
+        bootbox.alert(message);
+        return false;
+    }
+    return true;
+}
+function savePatient() {
+    if (!validatePatient()) return false;
+    var data = {
+        //basic
+        id: $('#ep_id').val(),
+        pid: $('#ep_pid').val(),
+        height: $('#ep_height').val(),
+        sex: $('#ep_sex_male').prop('checked') ? 1 : $('#ep_sex_female').prop('checked') ? 0 : null,
+        name: $('#ep_name').val(),
+        weight: $('#ep_weight').val(),
+        age: $('#ep_age').val(),
+        password: $('#ep_password').val(),
+        bmi: $('#ep_bmi_text').text(),
+        address: $('#ep_address').val(),
+        phone: $('#ep_phone').val(),
+        email: $('#ep_email').val(),
+
+        //surgery
+        surgeryDate: $('#ep_surgeryDate').val(),
+        dischargeDate: $('#ep_dischargeDate').val(),
+        surgeryMemo: $('#ep_surgeryMemo').val(),
+        surgeryTypeId: $('#ep_surgeryType').val(),
+        doctorId: $('#ep_doctor').val(),
+
+        //plan
+        plans: []
+    };
+    $('#ep_plans > tr').each(function (i, it) {
+        var p = {};
+        data.plans.push(p);
+        p.id = $(it).data('id')
+        p.stage = i + 1;
+        p.days = $(it).find('*[name="days"]').val();
+        p.times = $(it).find('*[name="times"]').val();
+        p.steps = $(it).find('*[name="steps"]').val();
+        p.pressure = $(it).find('*[name="pressure"]').val();
+    });
+    $.ajax($('#urls').data('patient_save'),
+        {
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data)
         })
+        .done(function (data) {
+            if (data.errors && data.errors.length) {
+                var message = '';
+                data.errors.forEach(function (it) {
+                    message += '<br>' + it
+                });
+                bootbox.alert(message);
+            } else {
+                $('#editPatient').modal('hide');
+            }
+        })
+        .fail(function (jqXHR) {
+            bootbox.alert(jqXHR.statusText);
+        });
+    return false;
 }
 function ep_calculateBMI() {
     var height = $('#ep_height').val();
@@ -247,7 +303,7 @@ function ep_changeSexColor() {
     }
 }
 function addPlanStep() {
-    var stage = $('#cpl_plan tr').length + 1;
+    var stage = $('#ep_plans > tr').length + 1;
     var tr = $('<tr></tr>')
         .append($('<td></td>').append($('<p class="form-control-static" name="index"></p>').text(stage)))
         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="days" value="7">')))
@@ -255,12 +311,12 @@ function addPlanStep() {
         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="steps">')))
         .append($('<td></td>').append($('<input type="number" class="form-control input-sm" name="pressure">')))
         .append($('<td></td>').append($('<button class="btn btn-sm btn-danger" onclick="removePlanStep(this)">删除</button>')))
-        .appendTo($('#cpl_plan'));
+        .appendTo($('#ep_plans'));
 }
 function removePlanStep(btn) {
     $(btn).parent().parent().remove();
     var i = 0;
-    $('#cpl_plan p[name="index"]').each(function(index, it) {
+    $('#ep_plans p[name="index"]').each(function (index, it) {
         $(it).text(++i);
     })
 }

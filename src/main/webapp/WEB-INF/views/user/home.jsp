@@ -6,16 +6,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
-    <link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css"/>" rel="stylesheet">
-    <link href="<c:url value="/resources/datetimepicker/bootstrap-datetimepicker.min.css"/>" rel="stylesheet">
-    <link href="<c:url value="/resources/select2/select2.css"/>" rel="stylesheet">
-    <link href="<c:url value="/resources/select2/select2-bootstrap.css"/>" rel="stylesheet">
-    <link href="<c:url value="/resources/site.css"/>" rel="stylesheet">
-    <link href="<c:url value="/resources/user/home.css"/>" rel="stylesheet">
+    <link rel="stylesheet" href="<c:url value="/resources/bootstrap/css/bootstrap.min.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/datetimepicker/bootstrap-datetimepicker.min.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/select2/select2.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/select2/select2-bootstrap.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/morris/morris.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/site.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/user/home.css"/>">
 </head>
 <body>
 
-<div class="navbar navbar-default navbar-fixed-top">
+<div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="icon-bar"></span>
@@ -25,125 +26,104 @@
         <span class="navbar-brand">第六人民医院 骨科</span>
     </div>
     <div class="navbar-collapse collapse">
-        <p class="navbar-text navbar-right">
-            <span>主治医师</span>
-            <span><a href="<c:url value="/logout"/>" class="btn btn-info">退出</a></span>
-        </p>
+        <span class="navbar-text">
+            <c:forEach var="it" items="${docTree}">
+                <c:if test="${it.supervisor != null}">&emsp;&gt;&emsp;</c:if>
+                <a href="<c:url value="/home/${it.id}"/>">${it.displayName}</a>
+            </c:forEach>
+        </span>
+        <span class="navbar-text navbar-right">
+            <span><button class="btn btn-link" onclick="showChangePasswordDialog()">修改密码</button></span>
+            <span><a href="<c:url value="/logout"/>" class="btn btn-link">退出</a></span>
+        </span>
     </div>
 </div>
 <div class="container">
-    <p>下属医生</p>
-    <c:forEach var="employee" items="${employees}">
-        <span>${employee.displayName}</span>
-    </c:forEach>
-</div>
-<div class="container">
-    <p>病人情况</p>
-    <button type="button" class="btn btn-primary" id="show_createPatient">添加病人</button>
-    <ul class="nav nav-tabs nav-tabs-justified">
-        <li><a href="#new" data-toggle="tab" id="patient_new_tab">已加入</a></li>
-        <li><a href="#registered" data-toggle="tab" id="patient_registered_tab">已注册</a></li>
-        <li><a href="#planned" data-toggle="tab" id="patient_planned_tab">已计划</a></li>
-        <li class="active"><a href="#trained" data-toggle="tab" id="patient_trained_tab">已训练</a></li>
-        <li><a href="#finished" data-toggle="tab" id="patient_finished_tab">已完成</a></li>
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane fade" id="new">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>病人标识</th>
-                            <th>电话号码</th>
-                            <th>添加时间</th>
-                        </tr>
-                    </thead>
-                    <tbody id="patientList_new">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="registered">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>病人标识</th>
-                        <th>姓名</th>
-                        <th>电话</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody id="patientList_registered">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="planned">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>病人标识</th>
-                        <th>姓名</th>
-                        <th>电话</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody id="patientList_planned">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="tab-pane fade active in" id="trained">
-            trained
-        </div>
-        <div class="tab-pane fade" id="finished">
-            finished
+    <div class="panel panel-default">
+        <div class="panel-heading">下属医生</div>
+        <div class="panel-body">
+            <c:forEach var="it" items="${employees}">
+                <a target="_blank" href="<c:url value="/home/${it.id}"/>" class="btn btn-link">${it.displayName}</a>
+            </c:forEach>
         </div>
     </div>
 </div>
-
-<div id="createPatient" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">添加病人</h4>
-            </div>
-            <div class="modal-body">
-                <form role="form" action="patient/create" id="form_createPatient">
-                    <div class="form-group">
-                        <div class="has-error">
-                            <span class="help-block" id="error_createPatient__serverError"></span>
-                        </div>
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>病人情况</span>
+            <button type="button" class="btn btn-link" id="show_createPatient" onclick="createPatient()">+ 添加病人</button>
+        </div>
+        <div class="panel-body">
+            <ul class="nav nav-tabs nav-tabs-justified">
+                <li><a href="#registered" data-toggle="tab" id="patient_registered_tab">已注册</a></li>
+                <li><a href="#planned" data-toggle="tab" id="patient_planned_tab">已计划</a></li>
+                <li class="active"><a href="#trained" data-toggle="tab" id="patient_trained_tab">已训练</a></li>
+                <li><a href="#finished" data-toggle="tab" id="patient_finished_tab">已完成</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade" id="registered">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>病人标识</th>
+                                <th>姓名</th>
+                                <th>电话</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id="patientList_registered" data-url="<c:url value="/patient/registered/${doctor.id}"/>">
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="form-group">
-                        <label for="createPatient_pid">病人标识</label>
-                        <input type="text" class="form-control" id="createPatient_pid" name="pid">
-                        <div class="has-error">
-                            <span class="help-block" id="error_createPatient_pid"></span>
-                        </div>
+                </div>
+                <div class="tab-pane fade" id="planned">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>病人标识</th>
+                                <th>姓名</th>
+                                <th>电话</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id="patientList_planned" data-url="<c:url value="/patient/planned/${doctor.id}"/>">
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="form-group">
-                        <label for="createPatient_phone">电话号码</label>
-                        <input type="text" class="form-control" id="createPatient_phone" name="phone">
-                        <span class="has-error">
-                            <span class="help-block" id="error_createPatient_phone"></span>
-                        </span>
+                </div>
+                <div class="tab-pane fade active in" id="trained">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>病人标识</th>
+                                <th>姓名</th>
+                                <th>手术日期</th>
+                                <th>手术名称</th>
+                                <th>完成情况</th>
+                                <th>总体感受</th>
+                                <th>训练强度</th>
+                                <th>不良反应</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id="patientList_trained" data-url="<c:url value="/patient/trained/${doctor.id}"/>">
+                            </tbody>
+                        </table>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="do_createPatient">保存</button>
+                </div>
+                <div class="tab-pane fade" id="finished">
+                    finished
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div id="editPatient" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static"
-     data-details-path="<c:url value="/patient/details"/>" data-edit-path="<c:url value="/patient/edit"/>">
+<div id="editPatient" class="modal fade" role="dialog" data-backdrop="static">
     <div class="modal-dialog" style="width: 1100px">
         <div class="modal-content">
             <div class="modal-header">
@@ -155,15 +135,16 @@
                     <div class="panel-heading">基本情况</div>
                     <div class="panel-body">
                         <form class="form-horizontal" role="form">
+                            <input type="hidden" id="ep_id"/>
                             <div class="form-group">
                                 <label class="col-md-1 control-label">标识</label>
                                 <div class="col-md-3">
-                                    <p class="form-control-static" id="ep_pid_text">pid</p>
+                                    <input type="text" class="form-control input-sm" id="ep_pid"/>
                                 </div>
                                 <label for="ep_height" class="col-md-1 control-label">身高</label>
                                 <div class="col-md-3">
                                     <div class="input-group input-group-sm">
-                                        <input type="number" class="form-control input-sm" id="ep_height" name="height" min="1" onchange="ep_calculateBMI()"/>
+                                        <input type="number" class="form-control input-sm" id="ep_height" min="1" onchange="ep_calculateBMI()"/>
                                         <span class="input-group-addon">厘米</span>
                                     </div>
                                 </div>
@@ -182,24 +163,24 @@
                             <div class="form-group">
                                 <label for="ep_name" class="col-md-1 control-label">姓名</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control input-sm" id="ep_name" name="name"/>
+                                    <input type="text" class="form-control input-sm" id="ep_name"/>
                                 </div>
                                 <label for="ep_weight" class="col-md-1 control-label">体重</label>
                                 <div class="col-md-3">
                                     <div class="input-group input-group-sm">
-                                        <input type="number" class="form-control input-sm" id="ep_weight" name="weight" min="1" onchange="ep_calculateBMI()"/>
+                                        <input type="number" class="form-control input-sm" id="ep_weight" min="1" onchange="ep_calculateBMI()"/>
                                         <span class="input-group-addon">&nbsp;斤&nbsp;</span>
                                     </div>
                                 </div>
                                 <label for="ep_age" class="col-md-1 control-label">年龄</label>
                                 <div class="col-md-3">
-                                    <input type="number" class="form-control input-sm" id="ep_age" name="age" min="0"/>
+                                    <input type="number" class="form-control input-sm" id="ep_age" min="0"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="ep_password" class="col-md-1 control-label">密码</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control input-sm" id="ep_password" name="password"/>
+                                    <input type="text" class="form-control input-sm" id="ep_password"/>
                                 </div>
                                 <label class="col-md-1 control-label">BMI</label>
                                 <div class="col-md-3">
@@ -207,30 +188,17 @@
                                 </div>
                                 <label for="ep_address" class="col-md-1 control-label">地址</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control input-sm" id="ep_address" name="address"/>
+                                    <input type="text" class="form-control input-sm" id="ep_address"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="ep_phone" class="col-md-1 control-label">电话</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control input-sm" id="ep_phone" name="phone"/>
+                                    <input type="text" class="form-control input-sm" id="ep_phone"/>
                                 </div>
                                 <label for="ep_email" class="col-md-1 control-label">邮箱</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control input-sm" id="ep_email" name="email"/>
-                                </div>
-                                <label for="ep_patientType" class="col-md-1 control-label">状态</label>
-                                <div class="col-md-3">
-                                    <div class="input-group input-group-sm select2-bootstrap-prepend">
-                                        <span class="input-group-addon"><span class="glyphicon glyphicon-th-list"></span></span>
-                                        <select class="form-control input-sm" id="ep_patientType" name="patientType">
-                                            <option value="NEW">已加入</option>
-                                            <option value="REGISTERED">已登录</option>
-                                            <option value="PLANNED">已计划</option>
-                                            <option value="TRAINED">已训练</option>
-                                            <option value="FINISHED">已完成</option>
-                                        </select>
-                                    </div>
+                                    <input type="text" class="form-control input-sm" id="ep_email"/>
                                 </div>
                             </div>
                         </form>
@@ -270,8 +238,8 @@
                                         </div>
                                         <label class="col-md-2 control-label">主管医生</label>
                                         <div class="col-md-4">
-                                            <select class="form-control input-sm" id="ep_surgeryBy">
-                                                <option></option>
+                                            <select class="form-control input-sm" id="ep_doctor">
+                                                <option value="${user.id}">${user.displayName}</option>
                                                 <c:forEach var="it" items="${employees}">
                                                     <option value="${it.id}">${it.displayName}</option>
                                                 </c:forEach>
@@ -291,63 +259,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="do_editPatient">保存</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="createPlan" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static"
-     data-update-path="<c:url value="/patient/createPlan"/>">
-    <div class="modal-dialog" style="width: 1100px;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">创建计划</h4>
-            </div>
-            <div class="modal-body">
-                <div class="panel panel-default">
-                    <div class="panel-heading">病人情况</div>
-                    <div class="panel-body">
-                        <form class="form-horizontal" role="form">
-                            <div class="form-group">
-                                <label class="col-md-1 control-label">标识</label>
-                                <p class="col-md-2 form-control-static" id="cpl_pid"></p>
-                                <label class="col-md-1 control-label">姓名</label>
-                                <p class="col-md-2 form-control-static" id="cpl_name"></p>
-                                <label class="col-md-1 control-label">性别</label>
-                                <p class="col-md-2 form-control-static" id="cpl_sex"></p>
-                                <label class="col-md-1 control-label">年龄</label>
-                                <p class="col-md-2 form-control-static" id="cpl_age"></p>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-1 control-label">身高</label>
-                                <p class="col-md-2 form-control-static" id="cpl_height"></p>
-                                <label class="col-md-1 control-label">体重</label>
-                                <p class="col-md-2 form-control-static" id="cpl_weight"></p>
-                                <label class="col-md-1 control-label">BMI</label>
-                                <p class="col-md-2 form-control-static" id="cpl_bmi"></p>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-1 control-label">手术日期</label>
-                                <p class="col-md-2 form-control-static" id="cpl_surgeryDate"></p>
-                                <label class="col-md-1 control-label">出院日期</label>
-                                <p class="col-md-2 form-control-static" id="cpl_dischargeDate"></p>
-                                <label class="col-md-1 control-label">手术名称</label>
-                                <p class="col-md-4 form-control-static" id="cpl_surgeryName"></p>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-1 control-label">主管医生</label>
-                                <p class="col-md-2 form-control-static" id="cpl_surgeonName"></p>
-                                <label class="col-md-1 control-label">特殊事项</label>
-                                <p class="col-md-8 form-control-static" id="cpl_surgeryMemo"></p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">训练计划</div>
                     <div class="panel-body">
@@ -361,25 +272,12 @@
                                 <th>目标压力</th>
                             </tr>
                             </thead>
-                            <tbody id="cpl_plan">
-                                <%--<tr>--%>
-                                    <%--<td><p class="form-control-static">1</p></td>--%>
-                                    <%--<td><input type="number" class="form-control input-sm" value="7" name="days" style="width:80px;"></td>--%>
-                                    <%--<td><input type="text" class="form-control input-sm" value="7" name="times"></td>--%>
-                                    <%--<td><input type="text" class="form-control input-sm" value="7" name="steps"></td>--%>
-                                    <%--<td><input type="text" class="form-control input-sm" value="7" name="pressure"></td>--%>
-                                    <%--<td><button class="btn btn-danger btn-sm" onclick="removePlanStep(this)">删除</button></td>--%>
-                                <%--</tr>--%>
+                            <tbody id="ep_plans">
                             </tbody>
                             <tfoot>
-                                <tr>
-                                    <td><button class="btn btn-sm btn-info" onclick="addPlanStep()">添加阶段</button></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <ul id="createPlan_errors"></ul>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td><button class="btn btn-sm btn-info" onclick="addPlanStep()">添加阶段</button></td>
+                            </tr>
                             </tfoot>
                         </table>
                     </div>
@@ -387,11 +285,89 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="do_createPlan">保存</button>
+                <button type="button" class="btn btn-primary" onclick="savePatient()">保存</button>
             </div>
         </div>
     </div>
 </div>
+
+<div id="viewTraining" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" style="width: 1100px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">训练情况</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>阶段</th>
+                                <th>步数</th>
+                                <th>压力</th>
+                                <th>总体感受</th>
+                                <th>训练强度</th>
+                                <th>不良反应</th>
+                                <th>超限比例</th>
+                                <th>留言</th>
+                            </tr>
+                            </thead>
+                            <tbody id="vt_list" data-url="<c:url value="/patient/chart/"/>">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="changePasswordDialog" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-url="<c:url value="/changePassword"/>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">修改密码</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="cpwd_oldPassword">原密码</label>
+                                <input type="password" id="cpwd_oldPassword" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="cpwd_newPassword">新密码</label>
+                                <input type="password" id="cpwd_newPassword" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="cpwd_newPassword2">确认新密码</label>
+                                <input type="password" id="cpwd_newPassword2" class="form-control">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="changePassword()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="urls" style="display: none"
+        data-patient_bean="<c:url value="/patient/bean/"/>"
+        data-patient_training="<c:url value="/patient/training/"/>"
+        data-patient_save="<c:url value="/patient/save"/>"
+        ></div>
 
 <script src="<c:url value="/resources/jquery/jquery.min.js"/>"></script>
 <script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js"/>"></script>
@@ -399,14 +375,16 @@
 <script src="<c:url value="/resources/datetimepicker/bootstrap-datetimepicker.zh-CN.js"/>"></script>
 <script src="<c:url value="/resources/select2/select2.js"/>"></script>
 <script src="<c:url value="/resources/select2/select2_locale_zh-CN.js"/>"></script>
+<script src="<c:url value="/resources/bootbox/bootbox.min.js"/>"></script>
+<script src="<c:url value="/resources/raphael/raphael-min.js"/>"></script>
+<script src="<c:url value="/resources/morris/morris.min.js"/>"></script>
 <script src="<c:url value="/resources/site.js"/>"></script>
 <script src="<c:url value="/resources/user/home.js"/>"></script>
 <script>
     $('#ep_surgeryDate_picker').datetimepicker({language:'zh-CN', pickTime:false});
     $('#ep_dischargeDate_picker').datetimepicker({language:'zh-CN', pickTime:false});
-    $('#ep_patientType').select2({minimumResultsForSearch:-1});
-    $('#ep_surgeryType').select2({minimumResultsForSearch:-1});
-    $('#ep_surgeryBy').select2({minimumResultsForSearch:-1});
+    $('#ep_surgeryType').select2();
+    $('#ep_doctor').select2();
 </script>
 </body>
 </html>

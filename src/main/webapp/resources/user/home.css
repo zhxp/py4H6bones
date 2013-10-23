@@ -1,3 +1,32 @@
 #cpl_plan input[type='number'] {
     width: 80px;
 }
+#tc_chart_container {
+    position: relative;
+    /*width: 800px;*/
+    /*height: 200px;*/
+}
+#chart {
+    position: relative;
+    left: 40px;
+    /*height: 250px;*/
+    /*width: 800px;*/
+}
+#tc_y_axis {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+}
+#tc_chart_container canvas {
+    /*width: 806px;*/
+    /*height: 200px;*/
+}
+/*#tc_chart svg {*/
+    /*width: inherit;*/
+    /*height: inherit;*/
+/*}*/
+/*#tc_chart text {*/
+    /*top: inherit;*/
+
+/*}*/

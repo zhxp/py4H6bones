@@ -1,19 +1,23 @@
 package zx.service;
 
-import zx.domain.Patient;
-import zx.domain.SurgeryType;
-import zx.domain.User;
-import zx.exception.ExistedException;
+import zx.domain.*;
 
+import java.util.Date;
 import java.util.List;
 
 public interface PatientService {
-    Patient createPatient(String pid) throws ExistedException;
+    Patient findById(Long id);
     void save(Patient patient);
     Patient findByPid(String pid);
-    List<Patient> findNewPatientsByDoctor(User doctor);
     List<Patient> findRegisteredPatientsByDoctor(User doctor);
     List<Patient> findPlannedPatientsByDoctor(User doctor);
+    List<Patient> findTrainedPatientsByDoctor(User doctor);
     List<SurgeryType> findSurgeryTypes();
     SurgeryType findSurgeryTypeById(Long surgeryTypeId);
+    Plan findPlan(Patient patient, Date date);
+    void save(Training training);
+    Training sumTrainingInDays3(Patient patient);
+    List<Training> findTraining(Patient patient);
+    Training findTrainingById(Long id);
+    void saveSurgery(SurgeryType surgeryType);
 }

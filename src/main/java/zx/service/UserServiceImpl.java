@@ -17,20 +17,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User createUser(String username) throws ExistedException {
-        User user = findByUsername(username);
-        if (user != null) {
-            throw new ExistedException(username);
-        }
-        user = new User();
-        user.setUsername(username);
-        save(user);
-        return user;
-    }
-
-    @Override
-    @Transactional
     public void save(User user) {
+        List<User> users = userRepository.findByUsername(user.getUsername());
+        if (!users.isEmpty()) {
+            if (user.getId() != null) {
+                for (User u : users) {
+                    if (!u.getId().equals(user.getId())) {
+                        throw new ExistedException("登录名不能重复：" + user.getUsername());
+                    }
+                }
+            }
+        }
+        if (user.getId() != null) {
+            User supervisor = user.getSupervisor();
+            StringBuilder sb = new StringBuilder();
+            while (supervisor != null) {
+                sb.append(" > ").append(supervisor.getId()).append('/').append(supervisor.getDisplayName());
+                if (supervisor.getId().equals(user.getId())) {
+                    throw new RuntimeException("医生主管循环引用：" + sb.toString());
+                }
+                supervisor = supervisor.getSupervisor();
+            }
+        }
         userRepository.save(user);
     }
 
@@ -43,5 +51,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long userId) {
         return userId == null ? null : userRepository.findOne(userId);
+    }
+
+    @Override
+    public List<User> findAllDoctors() {
+        return userRepository.findByAuthorityOrderByUsernameAsc("ROLE_USER");
+    }
+
+    @Override
+    public List<User> findTopLevelDoctors() {
+        return userRepository.findByAuthorityAndSupervisorIsNull("ROLE_USER");
     }
 }

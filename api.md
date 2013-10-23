@@ -1,34 +1,55 @@
 # API交互说明
-## 病人注册
-### `api/register`
-post json
+## 登录
+### GET `/api/login?pid={pid}&password={password}`
+例
 
+    http://180.168.35.37:8080/p11y/api/login?pid=20131015023&password=1234
+
+### 返回值
     {
-        "pid":"p1", //病人标识
-        "name":"姓名", //病人姓名
-        "password":"123",
-        "height":175, //身高，厘米，integer
-        "weight":120, //体重，斤，integer
-        "sex":1, //性别，女：0，男：1，integer
-        "age":50, //年龄，integer
-        "phone":"",
-        "email":"",
-        "address":""
+        "success":1 //成功返回1，失败返回0
     }
 
-#### Result
-TBD
+## 获取计划
+### GET `/api/plan/{pid}`
+例
 
-## 获取当天训练计划
-### `api/schedule/{pid}`
-#### Result
+    http://180.168.35.37:8080/p11y/api/plan/20131015023
+
+### 返回值
+
     {
-        "plan": {
-                    "stage":1, //当前训练阶段
-                    "days":7, //当前阶段持续天数
-                    "times":3, //当天所需训练次数
-                    "steps":20, //目标步数
-                    "pressure":35, //目标压力
-                }
+        "stage":1, //训练阶段
+        "days":7, //阶段持续天数
+        "times":3, //每天所需训练次数
+        "steps":20, //目标步数
+        "pressure":35, //目标压力
+        "startedOn":"2013-10-15", //当前阶段开始日期，为空时返回 ""
     }
 
+当前没有计划时返回 `{}`
+
+## 上传训练结果
+### POST JSON `/api/upload/{pid}`
+例
+
+    http://180.168.35.37:8080/p11y/api/upload/20131015023
+
+### JSON
+
+    {
+        "startedAt":"2013-10-15T08:20:00", //采集开始时间
+        "times":1, //当天第几次训练？？
+        "pressures":[20,21,25,23], //压力值整型数组
+        "feeling":0, //总体感觉,0,1,2,3,4文档左到右排列,(下同)
+        "effect":1, //训练强度
+        "reaction":0, //不良反应,0无，1肿胀，2酸痛，3弹响，4麻木，5淤青
+        "memo":"其他", //其他说明
+    }
+    
+### 返回值
+
+    {
+        "errors":[] //成功返回空数组，失败返回失败原因
+    }
+    
