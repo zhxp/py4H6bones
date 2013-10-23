@@ -12,6 +12,7 @@ class PlanBean {
     int steps
     int pressure
     int started
+    String memo
 
     PlanBean() {
     }
@@ -24,6 +25,7 @@ class PlanBean {
         steps = plan.steps
         pressure = plan.pressure
         started = (plan.startedOn && new DateTime().isAfter(plan.startedOn.time)) ? 1 : 0
+        memo = plan.memo?: ''
     }
 
     Plan toPlan() {
@@ -34,6 +36,7 @@ class PlanBean {
         plan.times = times
         plan.steps = steps
         plan.pressure = pressure
+        plan.memo = memo
         plan
     }
 }

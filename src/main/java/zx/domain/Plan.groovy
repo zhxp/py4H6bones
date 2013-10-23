@@ -23,4 +23,5 @@ class Plan {
     Date startedOn
     @Temporal(TemporalType.DATE)
     Date endedOn
+    String memo
 }

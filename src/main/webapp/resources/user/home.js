@@ -265,7 +265,7 @@ function savePatient() {
         p.times = node.find('*[name="times"]').val();
         p.steps = node.find('*[name="steps"]').val();
         p.pressure = node.find('*[name="pressure"]').val();
-        p.memo = node.find('*[name="memo"]').text();
+        p.memo = node.find('*[name="memo"]').val();
     });
     $.ajax($('#urls').data('patient_save'),
         {
