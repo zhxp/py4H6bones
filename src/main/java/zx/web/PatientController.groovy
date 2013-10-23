@@ -149,7 +149,7 @@ class PatientController {
             t.feeling = it.feelingLabel()
             t.effect = it.effectLabel()
             t.reaction = it.reactionLabel()
-            t.overrunRate = it.overrunRate
+            t.overrunRate = String.format('%2.2f', it.overrunRate)
             t.hasMemo = it.memo ? 1 : 0
         }
         result

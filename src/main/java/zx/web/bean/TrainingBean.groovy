@@ -32,10 +32,10 @@ class TrainingBean {
     def toTraining() {
         def patientService = Services.patientService()
         def patient = patientService.findByPid(pid)
-        def training = new Training()
-        def plan = patientService.findPlan(patient, null)
-        training.plan = plan
         def startedAt = new DateTime(new SimpleDateFormat('yyyy-MM-dd HH:mm:ss').parse(startedAt))
+        def plan = patientService.findPlan(patient, startedAt.toDate())
+        def training = new Training()
+        training.plan = plan
         training.startedAt = startedAt.toDate()
         training.duration = duration
         training.endedAt = startedAt.plusSeconds(duration).toDate()
