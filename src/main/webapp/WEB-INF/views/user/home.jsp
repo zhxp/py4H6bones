@@ -55,7 +55,7 @@
             <button type="button" class="btn btn-link" id="show_createPatient" onclick="createPatient()">+ 添加病人</button>
         </div>
         <div class="panel-body">
-            <ul class="nav nav-tabs nav-tabs-justified">
+            <ul class="nav nav-tabs nav-tabs-justified" id="patientTabs">
                 <li><a href="#registered" data-toggle="tab" id="patient_registered_tab">已注册</a></li>
                 <li><a href="#planned" data-toggle="tab" id="patient_planned_tab">已计划</a></li>
                 <li class="active"><a href="#trained" data-toggle="tab" id="patient_trained_tab">已训练</a></li>

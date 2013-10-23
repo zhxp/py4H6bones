@@ -31,7 +31,7 @@ function changePassword() {
     }
     return false;
 }
-$('#doctorTab').on('shown.bs.tab', function (e) {
+$('#doctorTabId').on('shown.bs.tab', function (e) {
     loadDoctors();
 });
 function loadDoctors() {
@@ -55,7 +55,10 @@ function loadDoctors() {
         });
 }
 loadDoctors();
-$('#surgeryTab').on('shown.bs.tab', function() {
+$('#surgeryTabId').on('shown.bs.tab', function() {
+    loadSurgery();
+});
+function loadSurgery() {
     var pane = $('#surgeryList');
     pane.empty();
     $.getJSON(pane.data('url'))
@@ -66,13 +69,13 @@ $('#surgeryTab').on('shown.bs.tab', function() {
                     .append($('<td></td>').text(it.name))
                     .append($('<td></td>')
                         .append($('<button class="btn btn-link">编辑</button>').click(function() {
-                            editSurgery(it.id)
+                            editSurgery(it.id, it.name)
                         }))
                     )
                 )
             })
         })
-});
+}
 function createDoctor() {
     $('#ed_id').val('');
     $('#ed_username').val('');
@@ -174,9 +177,11 @@ function saveSurgery() {
         $.ajax(dialog.data('url'),
             {
                 type:'post',
+                contentType: 'application/json',
                 data:JSON.stringify(data)
             })
             .done(function(data) {
+                loadSurgery();
                 dialog.modal('hide');
             })
             .fail(function(jqXHR) {
@@ -186,6 +191,9 @@ function saveSurgery() {
     return false;
 }
 function validateSurgery() {
-    $('#es_name').val().trim() || bootbox.alert('手术名称不能为空');
-    return false;
+    if (!$('#es_name').val().trim()) {
+        bootbox.alert('手术名称不能为空');
+        return false;
+    }
+    return true;
 }

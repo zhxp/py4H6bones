@@ -32,6 +32,16 @@ function changePassword() {
     return false;
 }
 $('#patient_registered_tab').on('shown.bs.tab', function (e) {
+    loadRegistered()
+});
+$('#patient_planned_tab').on('shown.bs.tab', function (e) {
+    loadPlanned()
+});
+$('#patient_trained_tab').on('shown.bs.tab', function (e) {
+    loadTrainedPatients()
+});
+loadTrainedPatients();
+function loadRegistered() {
     var pane = $('#patientList_registered');
     pane.empty();
     $.getJSON(pane.data('url'))
@@ -50,8 +60,8 @@ $('#patient_registered_tab').on('shown.bs.tab', function (e) {
                 )
             })
         });
-});
-$('#patient_planned_tab').on('shown.bs.tab', function (e) {
+}
+function loadPlanned() {
     var pane = $('#patientList_planned');
     pane.empty();
     $.getJSON(pane.data('url'))
@@ -70,11 +80,7 @@ $('#patient_planned_tab').on('shown.bs.tab', function (e) {
                 )
             })
         });
-});
-$('#patient_trained_tab').on('shown.bs.tab', function (e) {
-    loadTrainedPatients()
-});
-loadTrainedPatients();
+}
 function loadTrainedPatients() {
     var pane = $('#patientList_trained');
     pane.empty();
@@ -103,8 +109,11 @@ function loadTrainedPatients() {
             })
         });
 }
+function loadFinished() {
+
+}
 function createPatient() {
-    $('#ep_id').val('')
+    $('#ep_id').val('');
     //basic
     $('#ep_pid').val('');
     $('#ep_name').val('');
@@ -269,6 +278,11 @@ function savePatient() {
                 });
                 bootbox.alert(message);
             } else {
+                var activeId = $('#patientTabs > li.active a').prop('id');
+                if (activeId == 'patient_registered_tab') loadRegistered();
+                else if (activeId == 'patient_planned_tab') loadPlanned();
+                else if (activeId == 'patient_trained_tab') loadTrainedPatients();
+                else if (activeId == 'patient_finished_tab') loadFinished();
                 $('#editPatient').modal('hide');
             }
         })

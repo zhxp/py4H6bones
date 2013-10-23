@@ -45,7 +45,7 @@
         <div class="panel-body">
             <ul class="nav nav-tabs nav-tabs-justified">
                 <li class="active"><a href="#doctorTab" data-toggle="tab" id="doctorTabId">医生管理</a></li>
-                <li><a href="#surgeryTab" data-toggle="tab" id="surgeryTabId">医生管理</a></li>
+                <li><a href="#surgeryTab" data-toggle="tab" id="surgeryTabId">手术项目</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade active in" id="doctorTab">
@@ -70,7 +70,7 @@
                 </div>
                 <div class="tab-pane fade" id="surgeryTab">
                     <div>
-                        <button class="btn btn-link" onclick="createDoctor()">+ 添加手术</button>
+                        <button class="btn btn-link" onclick="createSurgery()">+ 添加手术</button>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -172,7 +172,7 @@
     </div>
 </div>
 
-<div id="editSurgeryDialog" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static"
+<div id="editSurgeryDialog" class="modal fade" role="dialog" data-backdrop="static"
      data-url="<c:url value="/admin/editSurgery"/>">
     <div class="modal-dialog">
         <div class="modal-content">
