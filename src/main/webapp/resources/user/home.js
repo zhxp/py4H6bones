@@ -51,6 +51,10 @@ function loadRegistered() {
                 pane.append(tr
                     .append($('<td></td>').text(it.pid))
                     .append($('<td></td>').text(it.name))
+                    .append($('<td></td>').text(it.sex))
+                    .append($('<td></td>').text(it.age))
+                    .append($('<td></td>').text(it.height))
+                    .append($('<td></td>').text(it.weight))
                     .append($('<td></td>').text(it.phone))
                     .append($('<td></td>')
                         .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
@@ -71,7 +75,11 @@ function loadPlanned() {
                 pane.append(tr
                     .append($('<td></td>').text(it.pid))
                     .append($('<td></td>').text(it.name))
-                    .append($('<td></td>').text(it.phone))
+                    .append($('<td></td>').text(it.bmi))
+                    .append($('<td></td>').text(it.surgeryDate))
+                    .append($('<td></td>').text(it.surgery))
+                    .append($('<td></td>').text(it.dischargeDate))
+                    .append($('<td></td>').text(it.doctor))
                     .append($('<td></td>')
                         .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
                             editPatient(it.pid)

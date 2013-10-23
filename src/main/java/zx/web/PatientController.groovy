@@ -29,34 +29,43 @@ class PatientController {
 
     @RequestMapping('registered/{doctorId}')
     @ResponseBody
-    List<Map<String, Object>> findRegisteredPatients(@PathVariable Long doctorId) {
+    def findRegisteredPatients(@PathVariable Long doctorId) {
         def doctor = userService.findById(doctorId)
         List<Patient> patients = patientService.findRegisteredPatientsByDoctor(doctor)
-        List<Map<String, Object>> result = new ArrayList<>(patients.size())
-        for (Patient patient : patients) {
-            Map<String, Object> o = new HashMap<>()
-            result.add(o)
-            o.put('pid', patient.getPid())
-            o.put('name', patient.getName())
-            o.put('phone', patient.getPhone())
+        def result = []
+        patients.each {
+            def o = [:]
+            result << o
+            o.pid = it.pid
+            o.name = it.name
+            o.sex = it.sex == 0 ? '女' : it.sex == '1' ? '男' : ''
+            o.age = it.age
+            o.height = it.height
+            o.weight = it.weight
+            o.phone = it.phone
         }
         return result
     }
 
     @RequestMapping('planned/{doctorId}')
     @ResponseBody
-    List<Map<String, Object>> findPlannedPatients(@PathVariable Long doctorId) {
+    def findPlannedPatients(@PathVariable Long doctorId) {
         def doctor = userService.findById(doctorId)
         List<Patient> patients = patientService.findPlannedPatientsByDoctor(doctor)
-        List<Map<String, Object>> result = new ArrayList<>(patients.size())
-        for (Patient patient : patients) {
-            Map<String, Object> o = new HashMap<>()
-            result.add(o)
-            o.put('pid', patient.getPid())
-            o.put('name', patient.getName())
-            o.put('phone', patient.getPhone())
+        def result = []
+        def dateFormat = new SimpleDateFormat('yyyy-MM-dd')
+        patients.each {
+            result << [
+                    pid: it.pid,
+                    name: it.name,
+                    bmi: it.bmi ? String.format('%4.2f', it.bmi) : '',
+                    surgeryDate: it.surgeryDate ? dateFormat.format(it.surgeryDate) : '',
+                    surgery: it.surgeryType ? it.surgeryType.name : '',
+                    dischargeDate: it.dischargeDate ? dateFormat.format(it.dischargeDate) : '',
+                    doctor: it.doctor ? it.doctor.displayName : ''
+            ]
         }
-        return result
+        result
     }
 
     @RequestMapping('trained/{doctorId}')

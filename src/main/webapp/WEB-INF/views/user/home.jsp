@@ -69,6 +69,10 @@
                             <tr>
                                 <th>病人标识</th>
                                 <th>姓名</th>
+                                <th>性别</th>
+                                <th>年龄</th>
+                                <th>身高</th>
+                                <th>体重</th>
                                 <th>电话</th>
                                 <th></th>
                             </tr>
@@ -85,7 +89,11 @@
                             <tr>
                                 <th>病人标识</th>
                                 <th>姓名</th>
-                                <th>电话</th>
+                                <th>BMI</th>
+                                <th>手术日期</th>
+                                <th>手术名称</th>
+                                <th>出院日期</th>
+                                <th>主管医生</th>
                                 <th></th>
                             </tr>
                             </thead>

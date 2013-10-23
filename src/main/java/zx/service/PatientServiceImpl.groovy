@@ -46,12 +46,8 @@ class PatientServiceImpl implements PatientService {
             }
         }
         patient.doctor = patient.doctor ?: loginService.currentUser
-        if (!patient.patientType) {
-            patient.patientType = PatientType.REGISTERED
-        } else if (patient.patientType == PatientType.REGISTERED && patient.plans.size()) {
-            patient.patientType = PatientType.PLANNED
-        } else if (patient.patientType == PatientType.PLANNED && !patient.plans.size()) {
-            patient.patientType = PatientType.REGISTERED
+        if (!(patient.patientType in [PatientType.TRAINED, PatientType.FINISHED])) {
+            patient.patientType = patient.plans.empty ? PatientType.REGISTERED : PatientType.PLANNED
         }
         patientRepository.save(patient)
 
