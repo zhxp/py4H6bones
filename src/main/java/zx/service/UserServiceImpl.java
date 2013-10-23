@@ -20,7 +20,9 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         List<User> users = userRepository.findByUsername(user.getUsername());
         if (!users.isEmpty()) {
-            if (user.getId() != null) {
+            if (user.getId() == null) {
+                throw new ExistedException("登录名不能重复：" + user.getUsername());
+            } else {
                 for (User u : users) {
                     if (!u.getId().equals(user.getId())) {
                         throw new ExistedException("登录名不能重复：" + user.getUsername());

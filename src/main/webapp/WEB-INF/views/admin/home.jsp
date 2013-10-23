@@ -68,7 +68,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade active in" id="surgeryTab">
+                <div class="tab-pane fade" id="surgeryTab">
                     <div>
                         <button class="btn btn-link" onclick="createDoctor()">+ 添加手术</button>
                     </div>
