@@ -1,5 +1,6 @@
 package zx.web.bean
 
+import org.joda.time.DateTime
 import zx.domain.Training
 import zx.service.Services
 
@@ -34,7 +35,7 @@ class TrainingBean {
         def training = new Training()
         def plan = patientService.findPlan(patient, null)
         training.plan = plan
-        def startedAt = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss').parse(startedAt);
+        def startedAt = new DateTime(new SimpleDateFormat('yyyy-MM-dd HH:mm:ss').parse(startedAt))
         training.startedAt = startedAt.toDate()
         training.duration = duration
         training.endedAt = startedAt.plusSeconds(duration).toDate()
