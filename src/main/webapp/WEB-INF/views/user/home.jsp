@@ -124,7 +124,23 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="finished">
-                    finished
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>病人标识</th>
+                                <th>姓名</th>
+                                <th>手术日期</th>
+                                <th>手术名称</th>
+                                <th>出院日期</th>
+                                <th>主管医生</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id="patientList_finished" data-url="<c:url value="/patient/finished/${doctor.id}"/>">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -294,8 +310,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="savePatient()">保存</button>
+                <div class="pull-left">
+                    <button id="btn_ep_markFinished" type="button" class="btn btn-danger pull-left" onclick="markFinished()">标记为已完成</button>
+                </div>
+                <button id="btn_ep_cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="btn_ep_save" type="button" class="btn btn-primary" onclick="savePatient()">保存</button>
             </div>
         </div>
     </div>
@@ -373,10 +392,69 @@
     </div>
 </div>
 
+<div id="sendMessageDialog" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-url="<c:url value="/patient/push/"/>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">发送消息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form role="form">
+                            <input type="hidden" id="smd_pid">
+                            <div class="form-group">
+                                <label for="smd_name">病人姓名</label>
+                                <p class="form-control-static" id="smd_name"></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="smd_message">消息内容</label>
+                                <textarea class="form-control" id="smd_message" cols="30" rows="8" maxlength="200"></textarea>
+                            </div>
+                            <div class="form-group pull-right">
+                                <span class="form-control-static text-primary" id="smd_size"></span>
+                                <span class="form-control-static"> / 200</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="messageHistoriesDialog" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-url="<c:url value="/patient/messageHistory/"/>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">发送消息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <span class="text-primary" id="mhd_name"></span>
+                        <div id="mhd_list" class="list-group"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="urls" style="display: none"
         data-patient_bean="<c:url value="/patient/bean/"/>"
         data-patient_training="<c:url value="/patient/training/"/>"
         data-patient_save="<c:url value="/patient/save"/>"
+        data-patient_mark_finished="<c:url value="/patient/markFinished/"/>"
         ></div>
 
 <script src="<c:url value="/resources/jquery/jquery.min.js"/>"></script>

@@ -40,6 +40,9 @@ $('#patient_planned_tab').on('shown.bs.tab', function (e) {
 $('#patient_trained_tab').on('shown.bs.tab', function (e) {
     loadTrainedPatients()
 });
+$('#patient_finished_tab').on('shown.bs.tab', function (e) {
+    loadFinished()
+});
 loadTrainedPatients();
 function loadRegistered() {
     var pane = $('#patientList_registered');
@@ -57,7 +60,7 @@ function loadRegistered() {
                     .append($('<td></td>').text(it.weight))
                     .append($('<td></td>').text(it.phone))
                     .append($('<td></td>')
-                        .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
+                        .append($('<button class="btn btn-link">详细</button>').click(function () {
                             editPatient(it.pid)
                         }))
                     )
@@ -81,8 +84,14 @@ function loadPlanned() {
                     .append($('<td></td>').text(it.dischargeDate))
                     .append($('<td></td>').text(it.doctor))
                     .append($('<td></td>')
-                        .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
+                        .append($('<button class="btn btn-link">详细</button>').click(function () {
                             editPatient(it.pid)
+                        }))
+                        .append($('<button class="btn btn-link">发送消息</button>').click(function () {
+                            showSendMessageDialog(it.pid, it.name)
+                        }))
+                        .append($('<button class="btn btn-link">消息历史</button>').click(function () {
+                            showMessageHistories(it.pid, it.name)
                         }))
                     )
                 )
@@ -106,11 +115,17 @@ function loadTrainedPatients() {
                     .append($('<td></td>').text(it.effect))
                     .append($('<td></td>').text(it.reaction))
                     .append($('<td></td>')
-                        .append($('<button class="btn btn-link">编辑</button>').click(function (pid) {
+                        .append($('<button class="btn btn-link">详细</button>').click(function () {
                             editPatient(it.pid)
                         }))
-                        .append($('<button class="btn btn-link">训练明细</button>').click(function (pid) {
+                        .append($('<button class="btn btn-link">训练明细</button>').click(function () {
                             viewTraining(it.pid)
+                        }))
+                        .append($('<button class="btn btn-link">发送消息</button>').click(function () {
+                            showSendMessageDialog(it.pid, it.name)
+                        }))
+                        .append($('<button class="btn btn-link">消息历史</button>').click(function () {
+                            showMessageHistories(it.pid, it.name)
                         }))
                     )
                 )
@@ -118,7 +133,33 @@ function loadTrainedPatients() {
         });
 }
 function loadFinished() {
-
+    var pane = $('#patientList_finished');
+    pane.empty();
+    $.getJSON(pane.data('url'))
+        .done(function (data) {
+            data.forEach(function (it) {
+                var tr = $('<tr></tr>', {'data-pid': it.pid});
+                pane.append(tr
+                    .append($('<td></td>').text(it.pid))
+                    .append($('<td></td>').text(it.name))
+                    .append($('<td></td>').text(it.surgeryDate))
+                    .append($('<td></td>').text(it.surgery))
+                    .append($('<td></td>').text(it.dischargeDate))
+                    .append($('<td></td>').text(it.doctor))
+                    .append($('<td></td>')
+                        .append($('<button class="btn btn-link">详细</button>').click(function () {
+                            editPatient(it.pid, true)
+                        }))
+                        .append($('<button class="btn btn-link">训练明细</button>').click(function () {
+                            viewTraining(it.pid)
+                        }))
+                        .append($('<button class="btn btn-link">消息历史</button>').click(function () {
+                            showMessageHistories(it.pid, it.name)
+                        }))
+                    )
+                )
+            })
+        });
 }
 function createPatient() {
     $('#ep_id').val('');
@@ -147,9 +188,12 @@ function createPatient() {
     //plan
     $('#ep_plans').empty();
 
+    $('#btn_ep_save').show();
+    $('#btn_ep_cancel').text('取消');
+    $('#btn_ep_markFinished').hide();
     $('#editPatient').modal('show');
 }
-function editPatient(pid) {
+function editPatient(pid, readonly) {
     $.getJSON($('#urls').data('patient_bean') + pid)
         .done(function (data) {
             $('#ep_id').val(data.id)
@@ -193,6 +237,15 @@ function editPatient(pid) {
                 tr.appendTo($('#ep_plans'));
             });
 
+            if (readonly) {
+                $('#btn_ep_save').hide();
+                $('#btn_ep_cancel').text('关闭');
+                $('#btn_ep_markFinished').hide();
+            } else {
+                $('#btn_ep_save').show();
+                $('#btn_ep_cancel').text('取消');
+                $('#btn_ep_markFinished').show();
+            }
             $('#editPatient').modal('show');
         })
 }
@@ -302,6 +355,29 @@ function savePatient() {
         });
     return false;
 }
+function markFinished() {
+    bootbox.confirm('将病人标记为【已完成】后，将不能再对该病人做修改。<br>请确认将病人标记为已完成', function(confirmed) {
+        if (confirmed) {
+            $.getJSON($('#urls').data('patient_mark_finished') + $('#ep_pid').val())
+                .done(function(data) {
+                    if (data.errors && data.errors.length) {
+                        var message = '';
+                        data.errors.forEach(function (it) {
+                            message += '<br>' + it
+                        });
+                        bootbox.alert(message);
+                    } else {
+                        var activeId = $('#patientTabs > li.active a').prop('id');
+                        if (activeId == 'patient_registered_tab') loadRegistered();
+                        else if (activeId == 'patient_planned_tab') loadPlanned();
+                        else if (activeId == 'patient_trained_tab') loadTrainedPatients();
+                        else if (activeId == 'patient_finished_tab') loadFinished();
+                        $('#editPatient').modal('hide');
+                    }
+                })
+        }
+    })
+}
 function ep_calculateBMI() {
     var height = $('#ep_height').val();
     var weight = $('#ep_weight').val();
@@ -345,4 +421,58 @@ function removePlanStep(btn) {
     $('#ep_plans p[name="index"]').each(function (index, it) {
         $(it).text(++i);
     })
+}
+function showSendMessageDialog(pid, name) {
+    $('#smd_pid').val(pid);
+    $('#smd_name').text(name);
+    $('#smd_message').val('');
+    $('#smd_size').text('0');
+    $('#sendMessageDialog').modal('show');
+}
+function sendMessage() {
+    var msg = $('#smd_message').val();
+    if (msg.trim()) {
+        $.ajax($('#sendMessageDialog').data('url') + $('#smd_pid').val(),
+            {
+                type: 'post',
+                data: {message: msg}
+            })
+            .done(function (data) {
+                if (data.errors && data.errors.length) {
+                    var message = '';
+                    data.errors.forEach(function (it) {
+                        message += '<br>' + it
+                    });
+                    bootbox.alert(message);
+                } else {
+                    $('#sendMessageDialog').modal('hide');
+                }
+            })
+            .fail(function (jqXHR) {
+                bootbox.alert(jqXHR.statusText);
+            });
+    } else {
+        bootbox.alert('请输入消息内容')
+    }
+    return false;
+}
+$('#smd_message').on('input', function() {
+    $('#smd_size').text($('#smd_message').val().length)
+});
+function showMessageHistories(pid, name) {
+    var pane = $('#mhd_list');
+    pane.empty();
+    $('#mhd_name').text(name);
+    $.getJSON($('#messageHistoriesDialog').data('url') + pid)
+        .done(function(data) {
+            data.forEach(function(it) {
+                pane.append($('<div class="list-group-item"></div>')
+                    .append($('<div class="container"></div>')
+                        .append($('<h5 class="list-group-item-text"></h5>').text(it.time + ' ' + it.doctor))
+                        .append($('<p class="list-group-item-text"></p>').text(it.text))
+                    )
+                )
+            });
+            $('#messageHistoriesDialog').modal('show');
+        })
 }

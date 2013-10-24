@@ -103,6 +103,13 @@ class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    List<Patient> findFinishedPatientsByDoctor(User doctor) {
+        def patients = patientRepository.findByPatientTypeAndDoctor(PatientType.FINISHED, doctor)
+        patients.each { setPlans(it) }
+        patients
+    }
+
+    @Override
     List<SurgeryType> findSurgeryTypes() {
         List<SurgeryType> surgeryTypes = surgeryTypeRepository.findAll()
         Collections.sort(surgeryTypes, CmnUtils.getSurgeryTypeNameComparator())
@@ -204,5 +211,15 @@ class PatientServiceImpl implements PatientService {
     List<PatientMessage> findMessages(Patient patient) {
         def list = patientMessageRepository.findByPatient(patient)
         list.reverse(true)
+    }
+
+    @Override
+    @Transactional
+    void markFinished(String pid) {
+        def patient = patientRepository.findByPid(pid)[0]
+        if (patient) {
+            patient.patientType = PatientType.FINISHED
+            patientRepository.save(patient as Patient)
+        }
     }
 }

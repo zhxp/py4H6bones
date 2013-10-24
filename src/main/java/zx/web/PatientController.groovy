@@ -1,4 +1,5 @@
 package zx.web
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -9,11 +10,14 @@ import org.springframework.web.bind.annotation.ResponseBody
 import zx.domain.Patient
 import zx.domain.PatientType
 import zx.domain.Plan
+import zx.domain.User
+import zx.service.MessageService
 import zx.service.PatientService
 import zx.service.PlanService
 import zx.service.UserService
 import zx.web.bean.PatientBean
 import zx.web.bean.PlanBean
+import zx.web.config.Login
 
 import java.text.SimpleDateFormat
 
@@ -26,6 +30,8 @@ class PatientController {
     UserService userService
     @Autowired
     PlanService planService
+    @Autowired
+    MessageService messageService
 
     @RequestMapping('registered/{doctorId}')
     @ResponseBody
@@ -86,6 +92,26 @@ class PatientController {
             p.feeling = training.feelingLabel()
             p.effect = training.effectLabel()
             p.reaction = training.reactionLabel()
+        }
+        result
+    }
+
+    @RequestMapping('finished/{doctorId}')
+    @ResponseBody
+    def findFinishedPatients(@PathVariable Long doctorId) {
+        def doctor = userService.findById(doctorId)
+        def result = []
+        def patients = patientService.findFinishedPatientsByDoctor(doctor)
+        def dateFormat = new SimpleDateFormat('yyyy-MM-dd')
+        patients.each {
+            result << [
+                    pid: it.pid,
+                    name: it.name,
+                    surgeryDate: it.surgeryDate ? dateFormat.format(it.surgeryDate) : '',
+                    surgery: it.surgeryType ? it.surgeryType.name : '',
+                    dischargeDate: it.dischargeDate ? dateFormat.format(it.dischargeDate) : '',
+                    doctor: it.doctor ? it.doctor.displayName : ''
+            ]
         }
         result
     }
@@ -182,5 +208,47 @@ class PatientController {
         def training = patientService.findTrainingById(id)
         model.addAttribute('bean', training)
         'user/chart'
+    }
+
+    @RequestMapping('markFinished/{pid}')
+    @ResponseBody
+    def markFinished(@PathVariable String pid) {
+        def result = [errors: []]
+        try {
+            patientService.markFinished(pid)
+        } catch (Exception e) {
+            result.errors = e.message
+        }
+        result
+    }
+
+    @RequestMapping('push/{pid}')
+    @ResponseBody
+    def pushMessage(@PathVariable String pid, String message, @Login User doctor) {
+        def patient = patientService.findByPid(pid)
+        def result = [errors:[]]
+        if (patient) {
+            try {
+                messageService.send(patient, message, doctor)
+            } catch (Exception e) {
+                result.errors << e.message
+            }
+        } else {
+            result.errors << "病人标识不存在: $pid"
+        }
+        result
+    }
+
+    @RequestMapping('messageHistory/{pid}')
+    @ResponseBody
+    def pushMessage(@PathVariable String pid) {
+        def patient = patientService.findByPid(pid)
+        def result = []
+        if (patient) {
+            def list = patientService.findMessages(patient)
+            def dateFormat = new SimpleDateFormat('yyyy-MM-dd HH:mm')
+            list.each { result << [text: it.message, time: dateFormat.format(it.createdAt), doctor: it.createdBy ? it.createdBy.displayName : ''] }
+        }
+        result
     }
 }

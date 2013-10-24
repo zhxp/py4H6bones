@@ -17,4 +17,6 @@ class PatientMessage {
     String message
     @Temporal(TemporalType.TIMESTAMP)
     Date createdAt = new Date()
+    @ManyToOne
+    User createdBy
 }

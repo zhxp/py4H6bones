@@ -12,6 +12,7 @@ public interface PatientService {
     List<Patient> findRegisteredPatientsByDoctor(User doctor);
     List<Patient> findPlannedPatientsByDoctor(User doctor);
     List<Patient> findTrainedPatientsByDoctor(User doctor);
+    List<Patient> findFinishedPatientsByDoctor(User doctor);
     List<SurgeryType> findSurgeryTypes();
     SurgeryType findSurgeryTypeById(Long surgeryTypeId);
     Plan findPlan(Patient patient, Date date);
@@ -21,4 +22,5 @@ public interface PatientService {
     Training findTrainingById(Long id);
     void saveSurgery(SurgeryType surgeryType);
     List<PatientMessage> findMessages(Patient patient);
+    void markFinished(String pid);
 }
