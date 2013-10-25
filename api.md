@@ -3,7 +3,7 @@
 ### GET `/api/login?pid={pid}&password={password}&token={xxxxx}`
 例
 
-    http://180.168.35.37:8080/p11y/api/login?pid=20131015023&password=1234&deviceId=asdfasdfasdf
+    http://180.168.35.37:8080/p11y/api/login?pid=20131015023&password=1234&token=asdfasdfasdf
 
 ### 返回值
     {
