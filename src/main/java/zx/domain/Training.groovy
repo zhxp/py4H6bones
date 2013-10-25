@@ -50,7 +50,7 @@ class Training {
         def result = []
         reaction.each {
             switch (it) {
-//                case 0: break;
+                case 0: result << '无'; break;
                 case 1: result << '肿胀'; break;
                 case 2: result << '酸痛'; break;
                 case 3: result << '弹响'; break;
