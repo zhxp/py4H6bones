@@ -12,8 +12,8 @@ class TrainingBean {
     int duration
     List<Double> pressures = []
     int feeling
-    int effect
-    int reaction
+//    int effect
+    int[] reaction
     String memo
 
     TrainingBean() {
@@ -24,7 +24,7 @@ class TrainingBean {
         duration = training.duration
         pressures = training.points
         feeling = training.feeling
-        effect = training.effect
+//        effect = training.effect
         reaction = training.reaction
         memo = training.memo
     }
@@ -41,7 +41,7 @@ class TrainingBean {
         training.endedAt = startedAt.plusSeconds(duration).toDate()
         training.points.addAll(pressures)
         training.feeling = feeling
-        training.effect = effect
+//        training.effect = effect
         training.reaction = reaction
         training.memo = memo
         training.steps = pressures.size()

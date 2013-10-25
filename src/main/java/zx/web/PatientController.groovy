@@ -90,8 +90,8 @@ class PatientController {
             p.surgeryName = it.surgeryType.name
             def training = patientService.sumTrainingInDays3(it)
             p.feeling = training.feelingLabel()
-            p.effect = training.effectLabel()
-            p.reaction = training.reactionLabel()
+//            p.effect = training.effectLabel()
+            p.reaction = training.reactionLabels()
         }
         result
     }
@@ -182,8 +182,8 @@ class PatientController {
             t.averagePressure = it.averagePressure
             t.PlanPressure = it.plan.pressure
             t.feeling = it.feelingLabel()
-            t.effect = it.effectLabel()
-            t.reaction = it.reactionLabel()
+//            t.effect = it.effectLabel()
+            t.reaction = it.reactionLabels()
             t.overrunRate = String.format('%2.2f', it.overrunRate)
             t.hasMemo = it.memo ? 1 : 0
         }

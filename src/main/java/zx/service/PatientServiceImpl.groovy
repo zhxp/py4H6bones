@@ -172,14 +172,14 @@ class PatientServiceImpl implements PatientService {
 
     @Override
     Training sumTrainingInDays3(Patient patient) {
-        def training = new Training(feeling: -1, effect: -1, reaction: -1)
+        def training = new Training(feeling: -1, effect: -1, reaction: [])
         def today = new DateTime().withTimeAtStartOfDay()
         def trainings = trainingRepository.findByPlanPatientAndStartedAtGreaterThan(patient,
                 today.minusDays(2).toDate())
         if (trainings) {
             training.feeling = trainings.max { it.feeling }.feeling
-            training.effect = trainings.max { it.effect }.effect
-            training.reaction = trainings.max { it.reaction }.reaction
+//            training.effect = trainings.max { it.effect }.effect
+//            training.reaction = trainings.max { it.reaction }.reaction
         }
 
         training

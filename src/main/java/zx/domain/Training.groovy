@@ -17,7 +17,8 @@ class Training {
     List<Double> points = []
     int feeling
     int effect
-    int reaction
+    @ElementCollection
+    List<Integer> reaction
     String memo
     int steps
     int averagePressure
@@ -25,11 +26,11 @@ class Training {
 
     String feelingLabel() {
         switch (feeling) {
-            case 0: return '舒适'
-            case 1: return '轻度不适'
-            case 2: return '中度不适'
-            case 3: return '重度不适'
-            case 4: return '紧急情况'
+//            case 0: return '舒适'
+            case 1: return '轻松'
+            case 2: return '适量'
+            case 3: return '过度'
+//            case 4: return '紧急情况'
             default: return ''
         }
     }
@@ -45,8 +46,23 @@ class Training {
         }
     }
 
-    String reactionLabel() {
-        switch (reaction) {
+    String[] reactionLabels() {
+        def result = []
+        reaction.each {
+            switch (it) {
+//                case 0: break;
+                case 1: result << '肿胀'; break;
+                case 2: result << '酸痛'; break;
+                case 3: result << '弹响'; break;
+                case 4: result << '麻木'; break;
+                case 5: result << '淤青'; break;
+            }
+        }
+        result
+    }
+
+    static String reactionLabelString(def val) {
+        switch (val) {
             case 0: return '无'
             case 1: return '肿胀'
             case 2: return '酸痛'

@@ -105,16 +105,20 @@ function loadTrainedPatients() {
         .done(function (data) {
             data.forEach(function (it) {
                 var tr = $('<tr></tr>', {'data-pid': it.pid});
-                pane.append(tr
-                    .append($('<td></td>').text(it.pid))
+                tr.append($('<td></td>').text(it.pid))
                     .append($('<td></td>').text(it.name))
                     .append($('<td></td>').text(it.surgeryDate))
                     .append($('<td></td>').text(it.surgeryName))
                     .append($('<td></td>').text('如何计算?'))
-                    .append($('<td></td>').text(it.feeling))
-                    .append($('<td></td>').text(it.effect))
-                    .append($('<td></td>').text(it.reaction))
-                    .append($('<td></td>')
+                    .append($('<td></td>').text(it.feeling));
+//                    .append($('<td></td>').text(it.effect))
+                var reaction = $('<td></td>');
+                it.reaction.forEach(function(r) {
+                    reaction.append($('<span></span>').text(r));
+                });
+                tr.append(reaction);
+//                tr.append($('<td></td>').text(it.reaction))
+                tr.append($('<td></td>')
                         .append($('<button class="btn btn-link">详细</button>').click(function () {
                             editPatient(it.pid)
                         }))
@@ -127,8 +131,8 @@ function loadTrainedPatients() {
                         .append($('<button class="btn btn-link">消息历史</button>').click(function () {
                             showMessageHistories(it.pid, it.name)
                         }))
-                    )
-                )
+                    );
+                pane.append(tr)
             })
         });
 }
@@ -261,10 +265,15 @@ function viewTraining(pid) {
                         .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.stage)))
                         .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.steps + '/' + it.planSteps)))
                         .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.averagePressure + '/' + it.PlanPressure)))
-                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.feeling)))
-                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.effect)))
-                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.reaction)))
-                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.overrunRate + '%')))
+                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.feeling)));
+//                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.effect)))
+//                        .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.reaction)))
+                var reaction = $('<td></td>');
+                it.reaction.forEach(function(r) {
+                    reaction.append($('<span class="tag"></span>').text(r));
+                });
+                tr.append(reaction);
+                tr.append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.overrunRate + '%')))
                         .append($('<td></td>').append($('<p class="form-control-static"></p>').text(it.hasMemo ? '有' : '')))
                         .append($('<td></td>')
                             .append($('<a target="_blank" href="' + url + it.id + '" class=" btn btn-link">图表</button>'))
