@@ -64,8 +64,12 @@ class ApiController {
     def uploadTraining(@PathVariable String pid, @RequestBody TrainingBean bean) {
         def result = [errors:[]]
         bean.pid = pid
-        def training = bean.toTraining()
-        patientService.save(training as Training)
+        try {
+            def training = bean.toTraining()
+            patientService.save(training as Training)
+        } catch (Exception e) {
+            result.errors << e.message
+        }
         result
     }
 

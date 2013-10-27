@@ -34,6 +34,9 @@ class TrainingBean {
         def patient = patientService.findByPid(pid)
         def startedAt = new DateTime(new SimpleDateFormat('yyyy-MM-dd HH:mm:ss').parse(startedAt))
         def plan = patientService.findPlan(patient, startedAt.toDate())
+        if (!plan) {
+            throw new RuntimeException(startedAt.toString('yyyy年M月d日') + '没有训练计划')
+        }
         def training = new Training()
         training.plan = plan
         training.startedAt = startedAt.toDate()
