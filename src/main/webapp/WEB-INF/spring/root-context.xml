@@ -10,6 +10,10 @@
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
         ">
 
+    <bean class="javapns.integration.spring.JavapnsPushServiceBasicImpl">
+        <property name="password" value="password"/>
+    </bean>
+
     <context:property-placeholder location="/WEB-INF/config.properties"/>
     <context:component-scan base-package="zx">
         <context:exclude-filter type="regex" expression="zx.web.*"/>

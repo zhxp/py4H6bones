@@ -102,6 +102,7 @@
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:4.2.0.Final" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-all:2.1.7" level="project" />
+    <orderEntry type="library" name="javapns-spring" level="project" />
   </component>
 </module>
 
