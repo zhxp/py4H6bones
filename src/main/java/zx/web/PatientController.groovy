@@ -1,6 +1,7 @@
 package zx.web
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.extension.Login
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,7 +18,6 @@ import zx.service.PlanService
 import zx.service.UserService
 import zx.web.bean.PatientBean
 import zx.web.bean.PlanBean
-import zx.web.config.Login
 
 import java.text.SimpleDateFormat
 

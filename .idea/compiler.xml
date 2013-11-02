@@ -22,11 +22,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="physiotherapy" />
+        <module name="spring-extension" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="physiotherapy" target="1.7" />
+      <module name="spring-extension" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
