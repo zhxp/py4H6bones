@@ -6,16 +6,6 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
-  <component name="GradleLocalSettings">
-    <option name="availableTasks">
-      <set>
-        <GradleTaskDescriptor>
-          <option name="description" value="Initializes a new Gradle build. [incubating]" />
-          <option name="name" value="setupBuild" />
-        </GradleTaskDescriptor>
-      </set>
-    </option>
-  </component>
   <component name="IdProvider" IDEtalkID="97D257E9B46E20DB71A1AA381817A89C" />
   <component name="MavenProjectsManager">
     <option name="originalFiles">
